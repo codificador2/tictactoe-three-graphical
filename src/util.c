@@ -284,6 +284,48 @@ SDL_AppResult getAllTextures(appState* state)
 	}
 	card_sprite = &state->textures[state->textureCount - 1];
 
+	if (getTexture(state, "items/dollar_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	dollar_item_sprite = &state->textures[state->textureCount - 1];
+
+	if (getTexture(state, "items/setter_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	setter_item_sprite = &state->textures[state->textureCount - 1];
+
+	if (getTexture(state, "items/randomizer_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	randomizer_item_sprite = &state->textures[state->textureCount - 1];
+
+	if (getTexture(state, "items/gun_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	gun_item_sprite = &state->textures[state->textureCount - 1];
+
+	if (getTexture(state, "items/divider_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	divider_item_sprite = &state->textures[state->textureCount - 1];
+
+	if (getTexture(state, "items/bag_item.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	bag_item_sprite = &state->textures[state->textureCount - 1];
+
 	return SDL_APP_CONTINUE;
 }
 

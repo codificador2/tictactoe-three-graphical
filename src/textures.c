@@ -48,3 +48,10 @@ sprite* x_id_sprite = NULL;
 sprite* o_id_sprite = NULL;
 
 sprite* card_sprite = NULL;
+
+sprite* dollar_item_sprite = NULL;
+sprite* setter_item_sprite = NULL;
+sprite* randomizer_item_sprite = NULL;
+sprite* gun_item_sprite = NULL;
+sprite* divider_item_sprite = NULL;
+sprite* bag_item_sprite = NULL;

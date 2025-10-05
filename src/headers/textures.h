@@ -50,3 +50,11 @@ extern sprite* x_id_sprite;
 extern sprite* o_id_sprite;
 
 extern sprite* card_sprite;
+
+extern sprite* dollar_item_sprite;
+extern sprite* setter_item_sprite;
+extern sprite* randomizer_item_sprite;
+extern sprite* gun_item_sprite;
+extern sprite* divider_item_sprite;
+extern sprite* bag_item_sprite;
+

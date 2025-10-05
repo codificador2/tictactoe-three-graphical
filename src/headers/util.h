@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-#define MAX_TEXTURES (33)
+#define MAX_TEXTURES (39)
 
 typedef struct
 {
@@ -20,7 +20,8 @@ typedef enum
 	ZONE_UNDO,
 	ZONE_BACK,
 	ZONE_NEXT,
-	ZONE_ACTION_SELECTOR
+	ZONE_ACTION_SELECTOR,
+	ZONE_INVENTORY
 } Zone;
 
 typedef struct
@@ -38,7 +39,8 @@ typedef enum
 	SCENE_MAIN_MENU,
 	SCENE_GAME_BOARD,
 	SCENE_GAME_ACTION,
-	SCENE_ACTION
+	SCENE_ACTION,
+	SCENE_ITEM
 } Scene;
 
 typedef enum
@@ -63,15 +65,15 @@ typedef enum
 	PIECE_DOLLAR
 } Piece;
 
-typedef struct
+typedef enum
 {
-	Uint8 setToOwnAmount: 4;
-	Uint8 dollarAmount: 4;
-	Uint8 randomizeAmount: 4;
-	Uint8 gunAmount: 4;
-	Uint8 halfOtherAmount: 4;
-	Uint8 bagAmount: 4;
-} inventory;
+	ITEM_DOLLAR = 0,
+	ITEM_SETTER = 1,
+	ITEM_RANDOM = 2,
+	ITEM_GUN = 3,
+	ITEM_DIVIDER = 4,
+	ITEM_BAG = 5
+} Item;
 
 typedef struct
 {
@@ -83,7 +85,7 @@ typedef struct
 	Uint32 money: 32;
 	char creditCardNumber[4];
 	bool hasHalfDebuff: 1;
-	inventory inv;
+	Uint8 inventory[6];
 } player;
 
 typedef struct
@@ -111,13 +113,36 @@ typedef struct
 	Sint8 lastHalfMove;
 
 	bool showNext;
+
+	int selectedInInventory;
+	Item selectedItem;
+	Piece preItemBoard[9];
 } gameState;
+
+typedef struct
+{
+	sprite x_dollar;
+	sprite x_setter;
+	sprite x_random;
+	sprite x_gun;
+	sprite x_divider;
+	sprite x_bag;
+
+	sprite o_dollar;
+	sprite o_setter;
+	sprite o_random;
+	sprite o_gun;
+	sprite o_divider;
+	sprite o_bag;
+} inventoryNums;
 
 typedef struct
 {
 	sprite text;
 	sprite secondaryText;
+	inventoryNums invNums;
 	TTF_Font* font;
+	sprite dollarText;
 } textInfo;
 
 typedef struct

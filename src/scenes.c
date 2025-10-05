@@ -3,6 +3,7 @@
 #include "headers/actions.h"
 #include "headers/game.h"
 #include "headers/gameUtil.h"
+#include "headers/items.h"
 #include "headers/textures.h"
 
 void renderMainMenuScene(appState* state)
@@ -78,11 +79,28 @@ void renderGameBoardScene(appState* state)
 		renderNextButton(state);
 
 	player* currentPlayer = (state->game.currentTurn == 'x') ? &state->game.xPlayer : &state->game.oPlayer;
-	if (currentPlayer->alertId || currentPlayer->alertCreditCard)
+
+	if (state->game.dollarTime >= 0)
+	{
+		float textRatio = (float)state->tInfo.dollarText.w / (float)state->tInfo.dollarText.h;
+		rect.h = state->wInfo.windowWidth / 20.0f;
+		rect.w = rect.h * textRatio;
+		const int maxWidth = (state->wInfo.windowWidth * 0.9f) - (state->wInfo.windowWidth / 12.0f) - (state->wInfo.windowWidth / 9.0f) - 15;
+		if (rect.w > maxWidth)
+		{
+			rect.w = maxWidth;
+			rect.h = rect.w / textRatio;
+		}
+		rect.x = state->wInfo.windowWidth / 10.0f;
+		rect.y = state->wInfo.windowHeight * 0.95 - rect.h / 2.0f;
+		SDL_RenderTexture(state->renderer, state->tInfo.dollarText.texture, NULL, &rect);
+	}
+
+	if (currentPlayer->alertId || currentPlayer->alertCreditCard || currentPlayer->hasHalfDebuff)
 	{
 		rect.x = state->wInfo.windowWidth / 10.0f;
 		float textRatio = (float)state->tInfo.text.w / (float)state->tInfo.text.h;
-		rect.h = state->wInfo.windowWidth / 10.0f;
+		rect.h = state->wInfo.windowWidth / 20.0f;
 		rect.w = rect.h * textRatio;
 		const int maxWidth = (state->wInfo.windowWidth * 0.9f) - (state->wInfo.windowWidth / 12.0f) - (state->wInfo.windowWidth / 9.0f) - 15;
 		if (rect.w > maxWidth)
@@ -91,8 +109,11 @@ void renderGameBoardScene(appState* state)
 			rect.h = rect.w / textRatio;
 		}
 		rect.y = state->wInfo.windowHeight * 0.95 - rect.h / 2.0f;
+		if (state->game.dollarTime >= 0)
+			rect.y -= rect.h + 15;
 		SDL_RenderTexture(state->renderer, state->tInfo.text.texture, NULL, &rect);
 	}
+
 
 	SDL_RenderPresent(state->renderer);
 }
@@ -146,8 +167,22 @@ void renderActionScene(appState* state)
 		case ACTION_LOOK:
 			renderLookAction(state);
 			break;
+		case ACTION_INVENTORY:
+			renderInventoryAction(state);
+			break;
 	}
 
+	SDL_RenderPresent(state->renderer);
+}
+
+void renderItemScene(appState* state)
+{
+	switch (state->game.selectedItem)
+	{
+		case ITEM_DOLLAR:
+			renderDollarItem(state);
+			break;
+	}
 	SDL_RenderPresent(state->renderer);
 }
 
@@ -323,6 +358,19 @@ SDL_AppResult handleActionEvent(appState* state, SDL_Event* event)
 			return handleCheckCardActionEvent(state, event);
 		case ACTION_LOOK:
 			return handleLookActionEvent(state, event);
+		case ACTION_INVENTORY:
+			handleInventoryActionEvent(state, event);
+		default:
+			return SDL_APP_CONTINUE;
+	}
+}
+
+SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
+{
+	switch (state->game.selectedItem)
+	{
+		case ITEM_DOLLAR:
+			return handleDollarItemEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}

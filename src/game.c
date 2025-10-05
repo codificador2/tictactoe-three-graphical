@@ -98,13 +98,22 @@ void renderBoard(appState* state)
 			else
 			{
 				if (
-						!state->game.showNext &&
-						state->game.blockPosition != j + (3 * i) &&
-						(state->scene == SCENE_GAME_BOARD) &&
-						canPieceChange(state->game.board[j + (3 * i)], state->game.nextPiece, state->game.mustHalfMove) &&
-						!(j + (3 * i) == state->game.lastHalfMove &&
-							state->game.oldBoard[j + (3 * i)] == state->game.nextPiece)
+						(
+							!state->game.showNext &&
+							state->game.blockPosition != j + (3 * i) &&
+							(state->scene == SCENE_GAME_BOARD) &&
+							canPieceChange(state->game.board[j + (3 * i)], state->game.nextPiece, state->game.mustHalfMove) &&
+							!(
+								j + (3 * i) == state->game.lastHalfMove &&
+								state->game.oldBoard[j + (3 * i)] == state->game.nextPiece
+								)
+						) ||
+						(
+						 state->scene == SCENE_ITEM &&
+						 (state->game.selectedItem == ITEM_DOLLAR || state->game.selectedItem == ITEM_SETTER || state->game.selectedItem == ITEM_RANDOM) &&
+						 !state->game.showNext
 						)
+				   )
 				{
 					switch (state->game.nextPiece)
 					{

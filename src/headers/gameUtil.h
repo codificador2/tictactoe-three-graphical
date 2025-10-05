@@ -11,3 +11,9 @@ void initGame(gameState* game);
 void renderNextButton(appState* state);
 
 void setupAlerts(appState* state);
+
+void updateInvNums(appState* state);
+
+void toNextPlayer(appState* state);
+
+void getDollarText(appState* state);

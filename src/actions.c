@@ -1,5 +1,6 @@
 #include "headers/actions.h"
 #include "headers/gameUtil.h"
+#include "headers/items.h"
 #include "headers/textures.h"
 
 int performAction(appState* state)
@@ -40,6 +41,10 @@ int performAction(appState* state)
 			int digit = SDL_rand(4);
 			filler[digit] = otherPlayer->creditCardNumber[digit];
 			getText(state, &state->tInfo.secondaryText, filler, (SDL_Color){255,255,255,255});
+			return 2;
+
+		case ACTION_INVENTORY:
+			getText(state, &state->tInfo.text, "Inventory", (SDL_Color){255,255,255,255});
 			return 2;
 
 
@@ -197,27 +202,105 @@ void renderLookAction(appState* state)
 	renderNextButton(state);
 }
 
-static void toNextPlayer(appState* state)
+static void renderSingleItem(appState* state, sprite* texture, int index, SDL_FRect* rect)
 {
+	SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 1.0f, 1.0f);
+	if (state->updateZone && isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, rect))
+	{
+		state->selectedZone = ZONE_INVENTORY;
+		state->updateZone = false;
+		state->game.selectedInInventory = index;
+	}
+	if (state->selectedZone == ZONE_INVENTORY && state->game.selectedInInventory == index)
+		SDL_RenderRect(state->renderer, rect);
+	SDL_RenderTexture(state->renderer, texture->texture, NULL, rect);
+	SDL_FRect textRect;
 
-	player* currentPlayer = (state->game.currentTurn == 'x') ? &state->game.xPlayer : &state->game.oPlayer;
-	// player* otherPlayer = (state->game.currentTurn == 'o') ? &state->game.xPlayer : &state->game.oPlayer;
-	currentPlayer->alertCreditCard = false;
-	currentPlayer->alertId = false;
-	currentPlayer->money += 50;
-	state->game.moveMade = false;
-	state->game.mustHalfMove = false;
-	SDL_memcpy(state->game.oldBoard, state->game.board, 9 * sizeof(Piece));
-	state->game.selectedInSelector = 0;
-	state->game.nextPiece = PIECE_NONE;
-	state->scene = SCENE_GAME_BOARD;
-	state->game.currentTurn = (state->game.currentTurn == 'x') ? 'o' : 'x';
-	state->game.showNext = false;
-	setupAlerts(state);
-	state->backgroundColor.g = 0.01f;
-	state->backgroundColor.r = 0.08f * (state->game.currentTurn == 'o');
-	state->backgroundColor.b = 0.08f * (state->game.currentTurn == 'x');
+	sprite* textSprite = NULL;
+	inventoryNums* nums = &state->tInfo.invNums;
+	bool x = (state->game.currentTurn == 'x');
+	switch (index)
+	{
+		case ITEM_DOLLAR:
+			textSprite = (x) ? &nums->x_dollar : &nums->o_dollar;
+			break;
+		case ITEM_SETTER:
+			textSprite = (x) ? &nums->x_setter : &nums->o_setter;
+			break;
+		case ITEM_RANDOM:
+			textSprite = (x) ? &nums->x_random : &nums->o_random;
+			break;
+		case ITEM_GUN:
+			textSprite = (x) ? &nums->x_gun : &nums->o_gun;
+			break;
+		case ITEM_DIVIDER:
+			textSprite = (x) ? &nums->x_divider : &nums->o_divider;
+			break;
+		case ITEM_BAG:
+			textSprite = (x) ? &nums->x_bag : &nums->o_bag;
+			break;
+	}
+
+	textRect.x = rect->x + 5;
+	textRect.y = rect->y + 5;
+	textRect.h = rect->h / 6.0f;
+	textRect.w = textRect.h * ((float)textSprite->w / (float)textSprite->h);
+	SDL_RenderTexture(state->renderer, textSprite->texture, NULL, &textRect);
+
+	rect->x += rect->w + 10;
 }
+
+void renderInventoryAction(appState* state)
+{
+	SDL_SetRenderViewport(state->renderer, NULL);
+	SDL_Rect viewport;
+	viewport.h = state->wInfo.windowHeight * 0.6;
+	viewport.w = state->wInfo.windowWidth * 0.8;
+	viewport.x = (state->wInfo.windowWidth / 2.0) - (viewport.w / 2.0);
+	viewport.y = (state->wInfo.windowHeight / 2.0) - (viewport.h / 2.0);
+
+	SDL_SetRenderViewport(state->renderer, &viewport);
+
+	SDL_FRect rect;
+
+	float textRatio = (float)state->tInfo.text.w / (float)state->tInfo.text.h;
+	rect.h = state->wInfo.windowHeight * 0.125f;
+	rect.w = rect.h * textRatio;
+
+	if (rect.w > viewport.w) {
+		rect.w = viewport.w;
+		rect.h = rect.w / textRatio;
+	}
+	rect.x = viewport.w / 2.0f - rect.w / 2.0f;
+	rect.y = 0;
+	SDL_RenderTexture(state->renderer, state->tInfo.text.texture, NULL, &rect);
+
+	rect.x = 0;
+	rect.w = viewport.w / 6.0f - 10;
+	rect.h = rect.w;
+	rect.y = rect.h + 20;
+	renderSingleItem(state, dollar_item_sprite, ITEM_DOLLAR, &rect);
+	renderSingleItem(state, setter_item_sprite, ITEM_SETTER, &rect);
+	renderSingleItem(state, randomizer_item_sprite, ITEM_RANDOM, &rect);
+	renderSingleItem(state, gun_item_sprite, ITEM_GUN, &rect);
+	renderSingleItem(state, divider_item_sprite, ITEM_DIVIDER, &rect);
+	renderSingleItem(state, bag_item_sprite, ITEM_BAG, &rect);
+
+	SDL_SetRenderViewport(state->renderer, NULL);
+
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+	rect.x = 0;
+	rect.y = state->wInfo.windowHeight - rect.h;
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+			state->selectedZone = ZONE_BACK;
+	}
+}
+
 
 static SDL_AppResult handleSimpleActionEvent(appState* state, SDL_Event* event)
 {
@@ -237,3 +320,20 @@ SDL_AppResult handleCheckIdActionEvent(appState* state, SDL_Event* event) { retu
 SDL_AppResult handleCheckCardActionEvent(appState* state, SDL_Event* event) { return handleSimpleActionEvent(state, event); }
 
 SDL_AppResult handleLookActionEvent(appState* state, SDL_Event* event) { return handleSimpleActionEvent(state, event); }
+
+SDL_AppResult handleInventoryActionEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->selectedZone == ZONE_BACK)
+			state->scene = SCENE_GAME_ACTION;
+		if (state->selectedZone == ZONE_INVENTORY)
+		{
+			state->game.selectedItem = state->game.selectedInInventory;
+			int res = useItem(state);
+			if (res != 1)
+				state->scene = SCENE_ITEM;
+		}
+	}
+	return SDL_APP_CONTINUE;
+}
