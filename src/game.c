@@ -115,25 +115,30 @@ void renderBoard(appState* state)
 						)
 				   )
 				{
-					switch (state->game.nextPiece)
+					if (state->scene == SCENE_ITEM && state->game.selectedItem == ITEM_RANDOM)
+						piece = random_piece_sprite;
+					else
 					{
-						case PIECE_X:
-							piece = x_sprite;
-							break;
-						case PIECE_O:
-							piece = o_sprite;
-							break;
-						case PIECE_HALF_X:
-							piece = half_x_sprite;
-							break;
-						case PIECE_HALF_O:
-							piece = half_o_sprite;
-							break;
-						case PIECE_DOLLAR:
-							piece = dollar_sprite;
-							break;
-						case PIECE_NONE:
-							break;
+						switch (state->game.nextPiece)
+						{
+							case PIECE_X:
+								piece = x_sprite;
+								break;
+							case PIECE_O:
+								piece = o_sprite;
+								break;
+							case PIECE_HALF_X:
+								piece = half_x_sprite;
+								break;
+							case PIECE_HALF_O:
+								piece = half_o_sprite;
+								break;
+							case PIECE_DOLLAR:
+								piece = dollar_sprite;
+								break;
+							case PIECE_NONE:
+								break;
+						}
 					}
 					SDL_SetTextureAlphaModFloat(piece->texture, 0.5f);
 					SDL_RenderTexture(state->renderer, piece->texture, NULL, &rect);

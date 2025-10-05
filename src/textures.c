@@ -55,3 +55,5 @@ sprite* randomizer_item_sprite = NULL;
 sprite* gun_item_sprite = NULL;
 sprite* divider_item_sprite = NULL;
 sprite* bag_item_sprite = NULL;
+
+sprite* random_piece_sprite = NULL;

@@ -58,3 +58,4 @@ extern sprite* gun_item_sprite;
 extern sprite* divider_item_sprite;
 extern sprite* bag_item_sprite;
 
+extern sprite* random_piece_sprite;

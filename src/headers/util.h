@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-#define MAX_TEXTURES (39)
+#define MAX_TEXTURES (40)
 
 typedef struct
 {
@@ -57,12 +57,12 @@ typedef enum
 
 typedef enum
 {
-	PIECE_NONE,
-	PIECE_X,
-	PIECE_O,
-	PIECE_HALF_X,
-	PIECE_HALF_O,
-	PIECE_DOLLAR
+	PIECE_NONE = 0,
+	PIECE_X = 1,
+	PIECE_O = 2,
+	PIECE_HALF_X = 3,
+	PIECE_HALF_O = 4,
+	PIECE_DOLLAR = 5
 } Piece;
 
 typedef enum

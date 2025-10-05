@@ -185,6 +185,9 @@ void renderItemScene(appState* state)
 		case ITEM_SETTER:
 			renderSetterItem(state);
 			break;
+		case ITEM_RANDOM:
+			renderRandomizerItem(state);
+			break;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -376,6 +379,8 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 			return handleDollarItemEvent(state, event);
 		case ITEM_SETTER:
 			return handleSetterItemEvent(state, event);
+		case ITEM_RANDOM:
+			return handleRandomizerItemEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}

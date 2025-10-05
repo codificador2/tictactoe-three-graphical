@@ -326,6 +326,13 @@ SDL_AppResult getAllTextures(appState* state)
 	}
 	bag_item_sprite = &state->textures[state->textureCount - 1];
 
+	if (getTexture(state, "random_piece.png") != 0)
+	{
+		SDL_Log("Failed to load texture. %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+	random_piece_sprite = &state->textures[state->textureCount - 1];
+
 	return SDL_APP_CONTINUE;
 }
 
