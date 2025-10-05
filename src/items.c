@@ -17,6 +17,14 @@ int useItem(appState* state)
 				return 2;
 			}
 			return 1;
+		case ITEM_SETTER:
+			if (currentPlayer->inventory[ITEM_SETTER] > 0)
+			{
+				state->game.showNext = false;
+				SDL_memcpy(state->game.preItemBoard, state->game.board, 9 * sizeof(Piece));
+				return 2;
+			}
+			return 1;
 	}
 	return 0;
 }
@@ -24,6 +32,46 @@ int useItem(appState* state)
 void renderDollarItem(appState* state)
 {
 	state->game.nextPiece = PIECE_DOLLAR;
+	renderBoard(state);
+	SDL_SetRenderViewport(state->renderer, NULL);
+	SDL_FRect rect;
+
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+		{
+			state->selectedZone = ZONE_BACK;
+		}
+	}
+
+	rect.y = rect.h;
+
+	if (state->game.showNext)
+	{
+		renderNextButton(state);
+		SDL_RenderTexture(state->renderer, undo_sprite->texture, NULL, &rect);
+
+		if (state->updateZone)
+		{
+			if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+			{
+				state->selectedZone = ZONE_UNDO;
+			}
+		}
+	}
+
+}
+
+void renderSetterItem(appState* state)
+{
+	state->game.nextPiece = (state->game.currentTurn == 'x') ? PIECE_HALF_X : PIECE_HALF_O;
 	renderBoard(state);
 	SDL_SetRenderViewport(state->renderer, NULL);
 	SDL_FRect rect;
@@ -82,6 +130,38 @@ SDL_AppResult handleDollarItemEvent(appState* state, SDL_Event* event)
 				--state->game.xPlayer.inventory[ITEM_DOLLAR];
 			else
 				--state->game.oPlayer.inventory[ITEM_DOLLAR];
+			toNextPlayer(state);
+		}
+		else if (state->selectedZone == ZONE_BACK)
+		{
+			SDL_memcpy(state->game.board, state->game.preItemBoard, 9 * sizeof(Piece));
+			state->game.showNext = false;
+			state->scene = SCENE_ACTION;
+		}
+	}
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult handleSetterItemEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->game.selectedTile != -1)
+		{
+			state->game.board[state->game.selectedTile] = state->game.nextPiece;
+			state->game.showNext = true;
+		}
+		else if (state->selectedZone == ZONE_UNDO)
+		{
+			SDL_memcpy(state->game.board, state->game.preItemBoard, 9 * sizeof(Piece));
+			state->game.showNext = false;
+		}
+		else if (state->selectedZone == ZONE_NEXT)
+		{
+			if (state->game.currentTurn == 'x')
+				--state->game.xPlayer.inventory[ITEM_SETTER];
+			else
+				--state->game.oPlayer.inventory[ITEM_SETTER];
 			toNextPlayer(state);
 		}
 		else if (state->selectedZone == ZONE_BACK)

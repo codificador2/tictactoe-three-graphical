@@ -63,7 +63,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 
 	initGame(&state->game);
 
-	state->game.xPlayer.inventory[ITEM_DOLLAR] = 1;
+	state->game.xPlayer.inventory[ITEM_SETTER] = 1;
 
 	updateInvNums(state);
 

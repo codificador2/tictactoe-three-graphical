@@ -182,6 +182,9 @@ void renderItemScene(appState* state)
 		case ITEM_DOLLAR:
 			renderDollarItem(state);
 			break;
+		case ITEM_SETTER:
+			renderSetterItem(state);
+			break;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -371,6 +374,8 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 	{
 		case ITEM_DOLLAR:
 			return handleDollarItemEvent(state, event);
+		case ITEM_SETTER:
+			return handleSetterItemEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}
