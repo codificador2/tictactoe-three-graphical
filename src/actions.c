@@ -13,7 +13,7 @@ int performAction(appState* state)
 			if (currentPlayer->idCooldown > 0)
 				return 1;
 
-			if (SDL_rand(4) == 0) {
+			if (SDL_rand(6) == 0) {
 				getText(state, &state->tInfo.text, "You successfully stole the other player's ID", (SDL_Color){255,255,0,255});
 				currentPlayer->hasOthersID = true;
 				otherPlayer->hasOwnID = false;
