@@ -50,6 +50,7 @@ static void initPlayer(player* p)
 	memset(p->inventory, 0, 6 * sizeof(Uint8));
 	for (int i = 0; i < 4; i++)
 		p->creditCardNumber[i] = SDL_rand(10) + '0';
+	p->creditCardNumber[4] = '\0';
 }
 
 void initGame(gameState* game)

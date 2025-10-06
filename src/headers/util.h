@@ -83,7 +83,7 @@ typedef struct
 	bool alertId: 1;
 	bool alertCreditCard: 1;
 	Uint32 money: 32;
-	char creditCardNumber[4];
+	char creditCardNumber[5];
 	bool hasHalfDebuff: 1;
 	Uint8 inventory[6];
 } player;
