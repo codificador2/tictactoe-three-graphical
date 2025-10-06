@@ -62,7 +62,6 @@ int useItem(appState* state)
 
 void renderDollarItem(appState* state)
 {
-	state->game.nextPiece = PIECE_DOLLAR;
 	renderBoard(state);
 	SDL_SetRenderViewport(state->renderer, NULL);
 	SDL_FRect rect;
@@ -102,7 +101,6 @@ void renderDollarItem(appState* state)
 
 void renderSetterItem(appState* state)
 {
-	state->game.nextPiece = (state->game.currentTurn == 'x') ? PIECE_HALF_X : PIECE_HALF_O;
 	renderBoard(state);
 	SDL_SetRenderViewport(state->renderer, NULL);
 	SDL_FRect rect;
@@ -265,7 +263,7 @@ SDL_AppResult handleSetterItemEvent(appState* state, SDL_Event* event)
 	{
 		if (state->game.selectedTile != -1)
 		{
-			state->game.board[state->game.selectedTile] = state->game.nextPiece;
+			state->game.board[state->game.selectedTile] = (state->game.currentTurn == 'x') ? PIECE_HALF_X : PIECE_HALF_O;
 			state->game.showNext = true;
 		}
 		else if (state->selectedZone == ZONE_UNDO)

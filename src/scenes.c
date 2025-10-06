@@ -334,6 +334,7 @@ SDL_AppResult handleGameActionEvent(appState* state, SDL_Event* event)
 		if (state->selectedZone == ZONE_BACK)
 		{
 			setupAlerts(state);
+			state->game.showNext = true;
 			state->scene = SCENE_GAME_BOARD;
 		}
 		else if (state->game.selectedAction != -1)

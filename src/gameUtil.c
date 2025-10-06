@@ -173,6 +173,7 @@ void toNextPlayer(appState* state)
 	currentPlayer->money += 50;
 	state->game.moveMade = false;
 	state->game.mustHalfMove = false;
+	state->game.lastHalfMove = -1;
 	SDL_memcpy(state->game.oldBoard, state->game.board, 9 * sizeof(Piece));
 	state->game.selectedInSelector = 0;
 	state->game.nextPiece = PIECE_NONE;

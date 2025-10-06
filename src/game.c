@@ -115,8 +115,15 @@ void renderBoard(appState* state)
 						)
 				   )
 				{
-					if (state->scene == SCENE_ITEM && state->game.selectedItem == ITEM_RANDOM)
-						piece = random_piece_sprite;
+					if (state->scene == SCENE_ITEM)
+					{
+						if (state->game.selectedItem == ITEM_RANDOM)
+							piece = random_piece_sprite;
+						else if (state->game.selectedItem == ITEM_DOLLAR)
+							piece = dollar_sprite;
+						else if (state->game.selectedItem == ITEM_SETTER)
+							piece = (state->game.currentTurn == 'x') ? half_x_sprite : half_o_sprite;
+					}
 					else
 					{
 						switch (state->game.nextPiece)
