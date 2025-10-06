@@ -168,6 +168,7 @@ void toNextPlayer(appState* state)
 	// player* otherPlayer = (state->game.currentTurn == 'o') ? &state->game.xPlayer : &state->game.oPlayer;
 	currentPlayer->alertCreditCard = false;
 	currentPlayer->alertId = false;
+	currentPlayer->hasHalfDebuff = false;
 	currentPlayer->money += 50;
 	state->game.moveMade = false;
 	state->game.mustHalfMove = false;

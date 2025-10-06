@@ -102,7 +102,7 @@ void renderBoard(appState* state)
 							!state->game.showNext &&
 							state->game.blockPosition != j + (3 * i) &&
 							(state->scene == SCENE_GAME_BOARD) &&
-							canPieceChange(state->game.board[j + (3 * i)], state->game.nextPiece, state->game.mustHalfMove) &&
+							canPieceChange(state->game.board[j + (3 * i)], state->game.nextPiece, state->game.mustHalfMove || ((state->game.currentTurn == 'x') ? state->game.xPlayer.hasHalfDebuff : state->game.oPlayer.hasHalfDebuff)) &&
 							!(
 								j + (3 * i) == state->game.lastHalfMove &&
 								state->game.oldBoard[j + (3 * i)] == state->game.nextPiece

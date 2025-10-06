@@ -6,7 +6,7 @@
 int useItem(appState* state)
 {
 	player* currentPlayer = (state->game.currentTurn == 'x') ? &state->game.xPlayer : &state->game.oPlayer;
-	// player* otherPlayer = (state->game.currentTurn == 'o') ? &state->game.xPlayer : &state->game.oPlayer;
+	player* otherPlayer = (state->game.currentTurn == 'o') ? &state->game.xPlayer : &state->game.oPlayer;
 	switch (state->game.selectedItem)
 	{
 		case ITEM_DOLLAR:
@@ -30,6 +30,14 @@ int useItem(appState* state)
 			{
 				state->game.showNext = false;
 				return 2;
+			}
+			return 1;
+		case ITEM_GUN:
+			if (currentPlayer->inventory[ITEM_GUN] > 0)
+			{
+				otherPlayer->hasHalfDebuff = true;
+				--currentPlayer->inventory[ITEM_GUN];
+				return 3;
 			}
 			return 1;
 	}
@@ -146,6 +154,11 @@ void renderRandomizerItem(appState* state)
 
 }
 
+void renderGunItem(appState* state)
+{
+
+}
+
 SDL_AppResult handleDollarItemEvent(appState* state, SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
@@ -233,5 +246,10 @@ SDL_AppResult handleRandomizerItemEvent(appState* state, SDL_Event* event)
 			state->scene = SCENE_ACTION;
 		}
 	}
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult handleGunItemEvent(appState* state, SDL_Event* event)
+{
 	return SDL_APP_CONTINUE;
 }

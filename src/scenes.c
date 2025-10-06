@@ -188,6 +188,9 @@ void renderItemScene(appState* state)
 		case ITEM_RANDOM:
 			renderRandomizerItem(state);
 			break;
+		case ITEM_GUN:
+			renderGunItem(state);
+			break;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -219,7 +222,7 @@ SDL_AppResult handleGameBoardEvent(appState* state, SDL_Event* event)
 			state->game.board[state->game.selectedTile] = state->game.nextPiece;
 			if (wasHalfMove)
 			{
-				if (state->game.mustHalfMove)
+				if (state->game.mustHalfMove || ((state->game.currentTurn == 'x') ? state->game.xPlayer.hasHalfDebuff : state->game.oPlayer.hasHalfDebuff))
 				{
 					// state->game.currentTurn = (state->game.currentTurn == 'x') ? 'o' : 'x';
 					state->game.showNext = true;
@@ -381,6 +384,8 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 			return handleSetterItemEvent(state, event);
 		case ITEM_RANDOM:
 			return handleRandomizerItemEvent(state, event);
+		case ITEM_GUN:
+			return handleGunItemEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}

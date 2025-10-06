@@ -331,7 +331,12 @@ SDL_AppResult handleInventoryActionEvent(appState* state, SDL_Event* event)
 		{
 			state->game.selectedItem = state->game.selectedInInventory;
 			int res = useItem(state);
-			if (res != 1)
+			if (res == 3)
+			{
+				toNextPlayer(state);
+				state->scene = SCENE_GAME_BOARD;
+			}
+			else if (res != 1)
 				state->scene = SCENE_ITEM;
 		}
 	}
