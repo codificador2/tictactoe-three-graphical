@@ -194,6 +194,9 @@ void renderItemScene(appState* state)
 		case ITEM_DIVIDER:
 			renderDividerItem(state);
 			break;
+		case ITEM_BAG:
+			renderBagItem(state);
+			break;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -392,7 +395,7 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 			return handleGunItemEvent(state, event);
 		case ITEM_DIVIDER:
 			return handleDividerItemEvent(state, event);
-		default:
-			return SDL_APP_CONTINUE;
+		case ITEM_BAG:
+			return handleBagItemEvent(state, event);
 	}
 }

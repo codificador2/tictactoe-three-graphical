@@ -56,6 +56,23 @@ int useItem(appState* state)
 				return 2;
 			}
 			return 1;
+		case ITEM_BAG:
+			if (currentPlayer->inventory[ITEM_BAG] > 0)
+			{
+				--currentPlayer->inventory[ITEM_DOLLAR];
+
+				const int money = otherPlayer->money / 2;
+				currentPlayer->money += money;
+				otherPlayer->money -= money;
+
+				char* str;
+				SDL_asprintf(&str, "You stole $%d from the other player", money);
+				getText(state, &state->tInfo.text, str, (SDL_Color){255,255,255,255});
+				SDL_free(str);
+
+				return 2;
+			}
+			return 1;
 	}
 	return 0;
 }
@@ -221,7 +238,22 @@ void renderDividerItem(appState* state)
 			state->selectedZone = ZONE_BACK;
 		}
 	}
+}
 
+void renderBagItem(appState* state)
+{
+	SDL_SetRenderViewport(state->renderer, NULL);
+
+	renderNextButton(state);
+
+	SDL_FRect rect;
+
+	rect.w = state->wInfo.windowWidth * 0.8f;
+	rect.h = rect.w / ((float)state->tInfo.text.w / (float)state->tInfo.text.h);
+	rect.x = state->wInfo.windowWidth / 2.0f - rect.w / 2.0f;
+	rect.y = state->wInfo.windowHeight / 2.0f - rect.h / 2.0f;
+
+	SDL_RenderTexture(state->renderer, state->tInfo.text.texture, NULL, &rect);
 }
 
 SDL_AppResult handleDollarItemEvent(appState* state, SDL_Event* event)
@@ -337,6 +369,16 @@ SDL_AppResult handleDividerItemEvent(appState* state, SDL_Event* event)
 				--state->game.oPlayer.inventory[ITEM_DIVIDER];
 			toNextPlayer(state);
 		}
+	}
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult handleBagItemEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->selectedZone == ZONE_NEXT)
+			toNextPlayer(state);
 	}
 	return SDL_APP_CONTINUE;
 }
