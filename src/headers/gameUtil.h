@@ -17,3 +17,5 @@ void updateInvNums(appState* state);
 void toNextPlayer(appState* state);
 
 void getDollarText(appState* state);
+
+void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect);

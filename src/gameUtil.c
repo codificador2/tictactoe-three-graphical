@@ -209,3 +209,62 @@ void getDollarText(appState* state)
 	getText(state, &state->tInfo.dollarText, str, (SDL_Color){0,255,0,255});
 	SDL_free(str);
 }
+
+void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect)
+{
+	SDL_SetRenderViewport(state->renderer, NULL);
+	SDL_RenderTexture(state->renderer, board_sprite->texture, NULL, rect);
+
+	SDL_Rect board_viewport;
+	board_viewport.x = rect->x;
+	board_viewport.w = rect->w;
+	board_viewport.y = rect->y;
+	board_viewport.h = rect->h;
+	SDL_SetRenderViewport(state->renderer, &board_viewport);
+
+
+	sprite* piece;
+
+	SDL_FRect tileRect;
+	tileRect.x = 0;
+	tileRect.y = 0;
+	tileRect.w = rect->w / 3.0f;
+	tileRect.h = rect->h / 3.0f;
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			switch (board[j + (3 * i)])
+			{
+				case PIECE_NONE:
+					break;
+				case PIECE_X:
+					piece = x_sprite;
+					break;
+				case PIECE_O:
+					piece = o_sprite;
+					break;
+				case PIECE_HALF_X:
+					piece = half_x_sprite;
+					break;
+				case PIECE_HALF_O:
+					piece = half_o_sprite;
+					break;
+				case PIECE_DOLLAR:
+					piece = dollar_sprite;
+					break;
+			}
+			if (board[j + (3 * i)] != PIECE_NONE)
+				SDL_RenderTexture(state->renderer, piece->texture, NULL, &tileRect);
+			if (state->game.blockPosition == j + (3 * i))
+			{
+				SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 0.0f, 0.5f);
+				SDL_RenderFillRect(state->renderer, &tileRect);
+			}
+			tileRect.x += tileRect.w;
+		}
+		tileRect.x -= 3 * tileRect.w;
+		tileRect.y += tileRect.h;
+	}
+}

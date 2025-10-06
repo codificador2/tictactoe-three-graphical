@@ -191,6 +191,9 @@ void renderItemScene(appState* state)
 		case ITEM_GUN:
 			renderGunItem(state);
 			break;
+		case ITEM_DIVIDER:
+			renderDividerItem(state);
+			break;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -386,6 +389,8 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 			return handleRandomizerItemEvent(state, event);
 		case ITEM_GUN:
 			return handleGunItemEvent(state, event);
+		case ITEM_DIVIDER:
+			return handleDividerItemEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}

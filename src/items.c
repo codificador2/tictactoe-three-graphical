@@ -40,6 +40,22 @@ int useItem(appState* state)
 				return 3;
 			}
 			return 1;
+		case ITEM_DIVIDER:
+			if (currentPlayer->inventory[ITEM_DIVIDER] > 0)
+			{
+				SDL_memcpy(state->game.preItemBoard, state->game.board, 9 * sizeof(Piece));
+				Piece full = (state->game.currentTurn == 'o') ? PIECE_X : PIECE_O;
+				Piece half = (state->game.currentTurn == 'o') ? PIECE_HALF_X : PIECE_HALF_O;
+				for (int i = 0; i < 9; i++)
+				{
+					if (state->game.board[i] == full)
+						state->game.board[i] = half;
+					else if (state->game.board[i] == half)
+						state->game.board[i] = PIECE_NONE;
+				}
+				return 2;
+			}
+			return 1;
 	}
 	return 0;
 }
@@ -159,6 +175,57 @@ void renderGunItem(appState* state)
 
 }
 
+void renderDividerItem(appState* state)
+{
+	SDL_FRect rect;
+	rect.w = state->wInfo.windowWidth / 3.0f;
+	rect.h = rect.w;
+	rect.x = state->wInfo.windowWidth / 9.0f;
+	rect.y = state->wInfo.windowHeight / 2.0f - rect.h / 2.0f;
+
+	renderStaticBoard(state, state->game.preItemBoard, &rect);
+
+	rect.x *= 5;
+
+	renderStaticBoard(state, state->game.board, &rect);
+
+	SDL_SetRenderViewport(state->renderer, NULL);
+	
+	rect.w = 0 - (state->wInfo.windowWidth / 6.0f);
+	rect.h = rect.w;
+	rect.x = state->wInfo.windowWidth / 2.0f - rect.w / 2.0f;
+	rect.y = state->wInfo.windowHeight / 2.0f - rect.h / 2.0f;
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+
+
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+	rect.x = state->wInfo.windowWidth - rect.w;
+	rect.y = state->wInfo.windowHeight - rect.h;
+	SDL_RenderTexture(state->renderer, next_sprite->texture, NULL, &rect);
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+		{
+			state->selectedZone = ZONE_NEXT;
+		}
+	}
+
+	rect.x = 0;
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+	rect.y = state->wInfo.windowHeight - rect.h;
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+		{
+			state->selectedZone = ZONE_BACK;
+		}
+	}
+
+}
+
 SDL_AppResult handleDollarItemEvent(appState* state, SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
@@ -251,5 +318,27 @@ SDL_AppResult handleRandomizerItemEvent(appState* state, SDL_Event* event)
 
 SDL_AppResult handleGunItemEvent(appState* state, SDL_Event* event)
 {
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult handleDividerItemEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->selectedZone == ZONE_BACK)
+		{
+			SDL_memcpy(state->game.board, state->game.preItemBoard, 9 * sizeof(Piece));
+			state->scene = SCENE_ACTION;
+		}
+		else if (state->selectedZone == ZONE_NEXT)
+		{
+			
+			if (state->game.currentTurn == 'x')
+				--state->game.xPlayer.inventory[ITEM_DIVIDER];
+			else
+				--state->game.oPlayer.inventory[ITEM_DIVIDER];
+			toNextPlayer(state);
+		}
+	}
 	return SDL_APP_CONTINUE;
 }
