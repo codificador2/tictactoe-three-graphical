@@ -124,6 +124,8 @@ typedef struct
 	Uint8 creditCardTries;
 	Uint8 currentCardDigit;
 	player* creditCardUsed;
+
+	char winner;
 } gameState;
 
 typedef struct

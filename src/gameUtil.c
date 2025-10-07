@@ -169,8 +169,22 @@ void toNextPlayer(appState* state)
 		case PIECE_NONE:
 			break;
 		case PIECE_X:
+			state->scene = SCENE_WIN;
+			state->game.winner = 'x';
+			state->backgroundColor.g = 0.01f;
+			state->backgroundColor.r = 0.08f * (state->game.oPlayer.hasOthersID);
+			state->backgroundColor.b = 0.08f * (!state->game.oPlayer.hasOthersID);
+			if (state->game.oPlayer.hasOthersID)
+				getText(state, &state->tInfo.text, "O had stolen X's ID", (SDL_Color){255,255,255,255});
+			return;
 		case PIECE_O:
 			state->scene = SCENE_WIN;
+			state->game.winner = 'o';
+			state->backgroundColor.g = 0.01f;
+			state->backgroundColor.r = 0.08f * (!state->game.xPlayer.hasOthersID);
+			state->backgroundColor.b = 0.08f * (state->game.xPlayer.hasOthersID);
+			if (state->game.xPlayer.hasOthersID)
+				getText(state, &state->tInfo.text, "X had stolen O's ID", (SDL_Color){255,255,255,255});
 			return;
 	}
 

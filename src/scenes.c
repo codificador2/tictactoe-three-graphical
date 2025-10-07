@@ -292,13 +292,35 @@ void renderWinScene(appState* state)
 	renderStaticBoard(state, state->game.board, &rect);
 	SDL_SetRenderViewport(state->renderer, NULL);
 	
+	player* winningPlayer = (state->game.winner == 'x') ? &state->game.xPlayer : &state->game.oPlayer;
+	sprite* winner = NULL;
+	if (!winningPlayer->hasOwnID)
+	{
+		if (state->game.winner == 'x')
+			winner = o_sprite;
+		else
+			winner = x_sprite;
+		
+		rect.w = state->wInfo.windowWidth / 3.0f;
+		rect.h = rect.w / ((float)state->tInfo.text.w/(float)state->tInfo.text.h);
+		rect.y = state->wInfo.windowHeight - rect.h;
+		rect.x = state->wInfo.windowWidth - rect.w;
+		SDL_RenderTexture(state->renderer, state->tInfo.text.texture, NULL, &rect);
+	}
+	else
+	{
+		if (state->game.winner == 'x')
+			winner = x_sprite;
+		else
+			winner = o_sprite;
+	}
 
 	rect.h = state->wInfo.windowWidth / 12.0f;
 	rect.w = rect.h;
 
 	rect.x = 0;
 	rect.y = 0;
-	SDL_RenderTexture(state->renderer, (state->game.currentTurn == 'x') ? x_sprite->texture : o_sprite->texture, NULL, &rect);
+	SDL_RenderTexture(state->renderer, winner->texture, NULL, &rect);
 
 	rect.x += rect.w;
 	rect.w = state->wInfo.windowWidth / 6.0f;
