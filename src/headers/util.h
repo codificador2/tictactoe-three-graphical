@@ -40,7 +40,8 @@ typedef enum
 	SCENE_GAME_BOARD,
 	SCENE_GAME_ACTION,
 	SCENE_ACTION,
-	SCENE_ITEM
+	SCENE_ITEM,
+	SCENE_SHOP
 } Scene;
 
 typedef enum
@@ -117,6 +118,11 @@ typedef struct
 	int selectedInInventory;
 	Item selectedItem;
 	Piece preItemBoard[9];
+
+	char typedcardNumber[5];
+	Uint8 creditCardTries;
+	Uint8 currentCardDigit;
+	player* creditCardUsed;
 } gameState;
 
 typedef struct
@@ -143,6 +149,8 @@ typedef struct
 	inventoryNums invNums;
 	TTF_Font* font;
 	sprite dollarText;
+	sprite creditCardInputText;
+	sprite prices[6];
 } textInfo;
 
 typedef struct
@@ -171,3 +179,5 @@ bool isPosInRect(appState* state, float x, float y, SDL_FRect* rect);
 SDL_AppResult getAllTextures(appState* state);
 
 void getText(appState* state, sprite* dest, char* text, SDL_Color color);
+
+void initPrices(appState* state);

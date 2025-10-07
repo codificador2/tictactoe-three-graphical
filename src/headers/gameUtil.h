@@ -19,3 +19,5 @@ void toNextPlayer(appState* state);
 void getDollarText(appState* state);
 
 void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect);
+
+void renderSingleItem(appState* state, sprite* texture, int index, SDL_FRect* rect, bool inventory);

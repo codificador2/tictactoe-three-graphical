@@ -170,6 +170,9 @@ void renderActionScene(appState* state)
 		case ACTION_INVENTORY:
 			renderInventoryAction(state);
 			break;
+		case ACTION_SHOP:
+			renderShopAction(state);
+			break;
 	}
 
 	SDL_RenderPresent(state->renderer);
@@ -197,6 +200,67 @@ void renderItemScene(appState* state)
 		case ITEM_BAG:
 			renderBagItem(state);
 			break;
+	}
+	SDL_RenderPresent(state->renderer);
+}
+
+void renderShopScene(appState* state)
+{
+	SDL_SetRenderViewport(state->renderer, NULL);
+	SDL_Rect viewport;
+	viewport.h = state->wInfo.windowHeight * 0.6;
+	viewport.w = state->wInfo.windowWidth * 0.8;
+	viewport.x = (state->wInfo.windowWidth / 2.0) - (viewport.w / 2.0);
+	viewport.y = (state->wInfo.windowHeight / 2.0) - (viewport.h / 2.0);
+
+	SDL_SetRenderViewport(state->renderer, &viewport);
+
+	SDL_FRect rect;
+
+	float textRatio = (float)state->tInfo.text.w / (float)state->tInfo.text.h;
+	rect.h = state->wInfo.windowHeight * 0.125f;
+	rect.w = rect.h * textRatio;
+
+	if (rect.w > viewport.w) {
+		rect.w = viewport.w;
+		rect.h = rect.w / textRatio;
+	}
+	rect.x = viewport.w / 2.0f - rect.w / 2.0f;
+	rect.y = 0;
+	SDL_RenderTexture(state->renderer, state->tInfo.text.texture, NULL, &rect);
+
+
+	rect.x = 0;
+	rect.w = viewport.w / 6.0f - 10;
+	rect.h = rect.w;
+	rect.y = rect.h + 20;
+	renderSingleItem(state, dollar_item_sprite, ITEM_DOLLAR, &rect, false);
+	renderSingleItem(state, setter_item_sprite, ITEM_SETTER, &rect, false);
+	renderSingleItem(state, randomizer_item_sprite, ITEM_RANDOM, &rect, false);
+	renderSingleItem(state, gun_item_sprite, ITEM_GUN, &rect, false);
+	renderSingleItem(state, divider_item_sprite, ITEM_DIVIDER, &rect, false);
+	renderSingleItem(state, bag_item_sprite, ITEM_BAG, &rect, false);
+
+	SDL_SetRenderViewport(state->renderer, NULL);
+
+	textRatio = (float)state->tInfo.secondaryText.w / (float)state->tInfo.secondaryText.h;
+	rect.h = state->wInfo.windowHeight * 0.125f;
+	rect.w = rect.h * textRatio;
+	rect.y = 0;
+	rect.x = state->wInfo.windowWidth - rect.w;
+
+	SDL_RenderTexture(state->renderer, state->tInfo.secondaryText.texture, NULL, &rect);
+
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+	rect.x = 0;
+	rect.y = state->wInfo.windowHeight - rect.h;
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+			state->selectedZone = ZONE_BACK;
 	}
 	SDL_RenderPresent(state->renderer);
 }
@@ -381,6 +445,8 @@ SDL_AppResult handleActionEvent(appState* state, SDL_Event* event)
 			return handleLookActionEvent(state, event);
 		case ACTION_INVENTORY:
 			handleInventoryActionEvent(state, event);
+		case ACTION_SHOP:
+			handleShopActionEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}
@@ -403,4 +469,48 @@ SDL_AppResult handleItemEvent(appState* state, SDL_Event* event)
 		case ITEM_BAG:
 			return handleBagItemEvent(state, event);
 	}
+}
+
+SDL_AppResult handleShopEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->selectedZone == ZONE_BACK)
+			state->scene = SCENE_GAME_ACTION;
+		if (state->selectedZone == ZONE_INVENTORY)
+		{
+			if (state->game.currentTurn == 'x')
+				++state->game.xPlayer.inventory[state->game.selectedInInventory];
+			else
+				++state->game.oPlayer.inventory[state->game.selectedInInventory];
+			switch (state->game.selectedInInventory)
+			{
+				case ITEM_DOLLAR:
+					state->game.creditCardUsed->money -= 300;
+					break;
+				case ITEM_SETTER:
+					state->game.creditCardUsed->money -= 250;
+					break;
+				case ITEM_RANDOM:
+					state->game.creditCardUsed->money -= 200;
+					break;
+				case ITEM_GUN:
+					state->game.creditCardUsed->money -= 400;
+					break;
+				case ITEM_DIVIDER:
+					state->game.creditCardUsed->money -= 700;
+					break;
+				case ITEM_BAG:
+					state->game.creditCardUsed->money -= 600;
+					break;
+			}
+			if (state->game.currentTurn == 'o' && state->game.creditCardUsed == &state->game.xPlayer)
+				state->game.xPlayer.alertCreditCard = true;
+			else if (state->game.currentTurn == 'x' && state->game.creditCardUsed == &state->game.oPlayer)
+				state->game.oPlayer.alertCreditCard = true;
+			toNextPlayer(state);
+		}
+	}
+	return SDL_APP_CONTINUE;
+	return SDL_APP_CONTINUE;
 }

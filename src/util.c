@@ -1,4 +1,5 @@
 #include "headers/util.h"
+#include "headers/items.h"
 #include "headers/textures.h"
 
 #include <SDL3_image/SDL_image.h>
@@ -355,4 +356,21 @@ void getText(appState* state, sprite* dest, char* text, SDL_Color color)
 	dest->h = surf->h;
 	dest->texture = SDL_CreateTextureFromSurface(state->renderer, surf);
 	SDL_DestroySurface(surf);
+}
+
+void initPrices(appState* state)
+{
+	char str[6] = {0};
+	SDL_snprintf(str, 5, "$%d", DOLLAR_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_DOLLAR], str, (SDL_Color){0,255,0,255});;
+	SDL_snprintf(str, 5, "$%d", SETTER_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_SETTER], str, (SDL_Color){0,255,0,255});;
+	SDL_snprintf(str, 5, "$%d", RANDOM_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_RANDOM], str, (SDL_Color){0,255,0,255});;
+	SDL_snprintf(str, 5, "$%d", GUN_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_GUN], str, (SDL_Color){0,255,0,255});;
+	SDL_snprintf(str, 5, "$%d", DIVIDER_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_DIVIDER], str, (SDL_Color){0,255,0,255});;
+	SDL_snprintf(str, 5, "$%d", BAG_PRICE);
+	getText(state, &state->tInfo.prices[ITEM_BAG], str, (SDL_Color){0,255,0,255});;
 }

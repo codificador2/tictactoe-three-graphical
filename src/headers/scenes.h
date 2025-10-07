@@ -12,6 +12,8 @@ void renderActionScene(appState* state);
 
 void renderItemScene(appState* state);
 
+void renderShopScene(appState* state);
+
 SDL_AppResult handleMainMenuEvent(appState* state, SDL_Event* event);
 
 SDL_AppResult handleGameBoardEvent(appState* state, SDL_Event* event);
@@ -21,3 +23,5 @@ SDL_AppResult handleGameActionEvent(appState* state, SDL_Event* event);
 SDL_AppResult handleActionEvent(appState* state, SDL_Event* event);
 
 SDL_AppResult handleItemEvent(appState* state, SDL_Event* event);
+
+SDL_AppResult handleShopEvent(appState* state, SDL_Event* event);

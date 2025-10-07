@@ -2,6 +2,13 @@
 
 #include "./util.h"
 
+#define DOLLAR_PRICE 300
+#define SETTER_PRICE 250
+#define RANDOM_PRICE 200
+#define GUN_PRICE 400
+#define DIVIDER_PRICE 700
+#define BAG_PRICE 600
+
 int useItem(appState* state);
 
 void renderDollarItem(appState* state);

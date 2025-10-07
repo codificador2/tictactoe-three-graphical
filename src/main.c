@@ -66,6 +66,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 	state->game.xPlayer.inventory[ITEM_BAG] = 1;
 
 	updateInvNums(state);
+	initPrices(state);
 
 	return SDL_APP_CONTINUE;
 }
@@ -91,6 +92,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 			return handleActionEvent(state, event);
 		case SCENE_ITEM:
 			return handleItemEvent(state, event);
+		case SCENE_SHOP:
+			return handleShopEvent(state, event);
 	}
 
 	return SDL_APP_CONTINUE;
@@ -124,6 +127,9 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 			break;
 		case SCENE_ITEM:
 			renderItemScene(state);
+			break;
+		case SCENE_SHOP:
+			renderShopScene(state);
 			break;
 	}
 

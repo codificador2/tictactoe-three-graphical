@@ -196,6 +196,8 @@ void toNextPlayer(appState* state)
 	}
 	getDollarText(state);
 	updateInvNums(state);
+	state->game.creditCardTries = 0;
+	state->game.currentCardDigit = 0;
 }
 
 void getDollarText(appState* state)
@@ -268,4 +270,66 @@ void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect)
 		tileRect.x -= 3 * tileRect.w;
 		tileRect.y += tileRect.h;
 	}
+}
+
+void renderSingleItem(appState* state, sprite* texture, int index, SDL_FRect* rect, bool inventory)
+{
+	SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 1.0f, 1.0f);
+	if (state->updateZone && isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, rect))
+	{
+		state->selectedZone = ZONE_INVENTORY;
+		state->updateZone = false;
+		state->game.selectedInInventory = index;
+	}
+	if (state->selectedZone == ZONE_INVENTORY && state->game.selectedInInventory == index)
+		SDL_RenderRect(state->renderer, rect);
+	SDL_RenderTexture(state->renderer, texture->texture, NULL, rect);
+	if (inventory)
+	{
+		SDL_FRect textRect;
+
+		sprite* textSprite = NULL;
+		inventoryNums* nums = &state->tInfo.invNums;
+		bool x = (state->game.currentTurn == 'x');
+		switch (index)
+		{
+			case ITEM_DOLLAR:
+				textSprite = (x) ? &nums->x_dollar : &nums->o_dollar;
+				break;
+			case ITEM_SETTER:
+				textSprite = (x) ? &nums->x_setter : &nums->o_setter;
+				break;
+			case ITEM_RANDOM:
+				textSprite = (x) ? &nums->x_random : &nums->o_random;
+				break;
+			case ITEM_GUN:
+				textSprite = (x) ? &nums->x_gun : &nums->o_gun;
+				break;
+			case ITEM_DIVIDER:
+				textSprite = (x) ? &nums->x_divider : &nums->o_divider;
+				break;
+			case ITEM_BAG:
+				textSprite = (x) ? &nums->x_bag : &nums->o_bag;
+				break;
+		}
+
+		textRect.x = rect->x + 5;
+		textRect.y = rect->y + 5;
+		textRect.h = rect->h / 6.0f;
+		textRect.w = textRect.h * ((float)textSprite->w / (float)textSprite->h);
+		SDL_RenderTexture(state->renderer, textSprite->texture, NULL, &textRect);
+	}
+	else
+	{
+		SDL_FRect textRect;
+
+		sprite* textSprite = &state->tInfo.prices[index];
+		textRect.x = rect->x + 5;
+		textRect.y = rect->y + 5;
+		textRect.h = rect->h / 6.0f;
+		textRect.w = textRect.h * ((float)textSprite->w / (float)textSprite->h);
+		SDL_RenderTexture(state->renderer, textSprite->texture, NULL, &textRect);
+	}
+
+	rect->x += rect->w + 10;
 }
