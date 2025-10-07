@@ -23,3 +23,5 @@ void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect);
 void renderSingleItem(appState* state, sprite* texture, int index, SDL_FRect* rect, bool inventory);
 
 Piece getWinningPiece(appState* state);
+
+void randomizeCard(player* p);

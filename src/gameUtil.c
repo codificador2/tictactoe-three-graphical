@@ -38,6 +38,12 @@ bool canPieceChange(Piece oldPiece, Piece newPiece, bool requireHalfMove)
 	}
 }
 
+void randomizeCard(player* p)
+{
+	for (int i = 0; i < 4; i++)
+		p->creditCardNumber[i] = SDL_rand(10) + '0';
+}
+
 static void initPlayer(player* p)
 {
 	p->alertCreditCard = false;
@@ -48,8 +54,7 @@ static void initPlayer(player* p)
 	p->idCooldown = -1;
 	p->money = 1000;
 	memset(p->inventory, 0, 6 * sizeof(Uint8));
-	for (int i = 0; i < 4; i++)
-		p->creditCardNumber[i] = SDL_rand(10) + '0';
+	randomizeCard(p);
 	p->creditCardNumber[4] = '\0';
 }
 

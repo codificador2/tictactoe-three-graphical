@@ -34,6 +34,7 @@ int performAction(appState* state)
 			otherPlayer->hasOthersID = false;
 			return 2;
 		case ACTION_CHECK_CARD:
+			randomizeCard(currentPlayer);
 			getText(state, &state->tInfo.text, currentPlayer->creditCardNumber, (SDL_Color){255,255,255,255});
 			return 2;
 		case ACTION_LOOK:
