@@ -1,4 +1,5 @@
 #include "headers/actions.h"
+#include "headers/game.h"
 #include "headers/gameUtil.h"
 #include "headers/items.h"
 #include "headers/textures.h"
@@ -54,7 +55,8 @@ int performAction(appState* state)
 			getText(state, &state->tInfo.secondaryText, str, (SDL_Color){255,255,255,255});
 			SDL_free(str);
 			return 2;
-
+		case ACTION_BLOCK:
+			return 2;
 		case ACTION_SKIP:
 			return 2;
 
@@ -332,6 +334,21 @@ void renderShopAction(appState* state)
 	SDL_RenderTexture(state->renderer, state->tInfo.secondaryText.texture, NULL, &rect);
 }
 
+void renderBlockAction(appState* state)
+{
+	SDL_FRect rect;
+	rect.w = state->wInfo.windowWidth / 10.0f;
+	rect.h = rect.w;
+	rect.x = 0;
+	rect.y = state->wInfo.windowHeight - rect.h;
+	SDL_RenderTexture(state->renderer, back_sprite->texture, NULL, &rect);
+	if (state->updateZone)
+	{
+		if (isPosInRect(state, state->wInfo.mouseX, state->wInfo.mouseY, &rect))
+			state->selectedZone = ZONE_BACK;
+	}
+	renderBoard(state);
+}
 
 static SDL_AppResult handleSimpleActionEvent(appState* state, SDL_Event* event)
 {
@@ -426,6 +443,24 @@ SDL_AppResult handleShopActionEvent(appState* state, SDL_Event* event)
 			--state->game.currentCardDigit;
 			state->game.typedcardNumber[state->game.currentCardDigit] = '_';
 			getText(state, &state->tInfo.creditCardInputText, state->game.typedcardNumber, (SDL_Color){255,255,255,255});
+		}
+	}
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult handleBlockActionEvent(appState* state, SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT)
+	{
+		if (state->game.selectedTile != -1)
+		{
+			state->game.blockPosition = state->game.selectedTile;
+			toNextPlayer(state);
+		}
+		else if (state->selectedZone == ZONE_BACK)
+		{
+			state->scene = SCENE_GAME_ACTION;
+			state->game.showNext = true;
 		}
 	}
 	return SDL_APP_CONTINUE;

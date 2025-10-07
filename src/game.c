@@ -61,11 +61,12 @@ void renderBoard(appState* state)
 
 	SDL_RenderTexture(state->renderer, board_sprite->texture, NULL, &rect);
 
+	rect.w /= 3;
+	rect.h /= 3;
+
 	sprite* piece;
 
 	state->game.selectedTile = -1;
-	rect.w /= 3;
-	rect.h /= 3;
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -112,6 +113,10 @@ void renderBoard(appState* state)
 						 state->scene == SCENE_ITEM &&
 						 (state->game.selectedItem == ITEM_DOLLAR || state->game.selectedItem == ITEM_SETTER || state->game.selectedItem == ITEM_RANDOM) &&
 						 !state->game.showNext
+						) ||
+						(
+						 state->scene == SCENE_ACTION &&
+						 state->game.action == ACTION_BLOCK
 						)
 				   )
 				{
@@ -123,6 +128,15 @@ void renderBoard(appState* state)
 							piece = dollar_sprite;
 						else if (state->game.selectedItem == ITEM_SETTER)
 							piece = (state->game.currentTurn == 'x') ? half_x_sprite : half_o_sprite;
+					}
+					else if (state->scene == SCENE_ACTION)
+					{
+						if (state->game.board[j + (3 * i)] != PIECE_NONE)
+							SDL_RenderTexture(state->renderer, piece->texture, NULL, &rect);
+						// SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 0.0f, 0.5f);
+						// SDL_RenderFillRect(state->renderer, &rect);
+						SDL_SetRenderDrawColorFloat(state->renderer, state->backgroundColor.r, state->backgroundColor.g, state->backgroundColor.b, 1.0f);
+						SDL_RenderRect(state->renderer, &rect);
 					}
 					else
 					{
@@ -147,9 +161,12 @@ void renderBoard(appState* state)
 								break;
 						}
 					}
-					SDL_SetTextureAlphaModFloat(piece->texture, 0.5f);
-					SDL_RenderTexture(state->renderer, piece->texture, NULL, &rect);
-					SDL_SetTextureAlphaModFloat(piece->texture, 1.0f);
+					if (state->scene != SCENE_ACTION)
+					{
+						SDL_SetTextureAlphaModFloat(piece->texture, 0.5f);
+						SDL_RenderTexture(state->renderer, piece->texture, NULL, &rect);
+						SDL_SetTextureAlphaModFloat(piece->texture, 1.0f);
+					}
 					state->game.selectedTile = j + (3 * i);
 				}
 				else
@@ -160,8 +177,10 @@ void renderBoard(appState* state)
 			}
 			if (state->game.blockPosition == j + (3 * i))
 			{
-				SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 0.0f, 0.5f);
-				SDL_RenderFillRect(state->renderer, &rect);
+				SDL_SetRenderDrawColorFloat(state->renderer, state->backgroundColor.r, state->backgroundColor.g, state->backgroundColor.b, 1.0f);
+				SDL_RenderRect(state->renderer, &rect);
+				// SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 0.0f, 0.5f);
+				// SDL_RenderFillRect(state->renderer, &rect);
 			}
 			rect.x += rect.w;
 		}

@@ -173,6 +173,9 @@ void renderActionScene(appState* state)
 		case ACTION_SHOP:
 			renderShopAction(state);
 			break;
+		case ACTION_BLOCK:
+			renderBlockAction(state);
+			break;
 	}
 
 	SDL_RenderPresent(state->renderer);
@@ -444,9 +447,11 @@ SDL_AppResult handleActionEvent(appState* state, SDL_Event* event)
 		case ACTION_LOOK:
 			return handleLookActionEvent(state, event);
 		case ACTION_INVENTORY:
-			handleInventoryActionEvent(state, event);
+			return handleInventoryActionEvent(state, event);
 		case ACTION_SHOP:
-			handleShopActionEvent(state, event);
+			return handleShopActionEvent(state, event);
+		case ACTION_BLOCK:
+			return handleBlockActionEvent(state, event);
 		default:
 			return SDL_APP_CONTINUE;
 	}
