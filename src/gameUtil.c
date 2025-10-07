@@ -271,8 +271,8 @@ void renderStaticBoard(appState* state, Piece board[9], SDL_FRect* rect)
 				SDL_RenderTexture(state->renderer, piece->texture, NULL, &tileRect);
 			if (state->game.blockPosition == j + (3 * i))
 			{
-				SDL_SetRenderDrawColorFloat(state->renderer, 1.0f, 1.0f, 0.0f, 0.5f);
-				SDL_RenderFillRect(state->renderer, &tileRect);
+				SDL_SetRenderDrawColorFloat(state->renderer, state->backgroundColor.r, state->backgroundColor.g, state->backgroundColor.b, 1.0f);
+				SDL_RenderRect(state->renderer, &tileRect);
 			}
 			tileRect.x += tileRect.w;
 		}
