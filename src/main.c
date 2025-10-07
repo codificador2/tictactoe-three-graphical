@@ -92,6 +92,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 			return handleItemEvent(state, event);
 		case SCENE_SHOP:
 			return handleShopEvent(state, event);
+		case SCENE_WIN:
+			return handleWinEvent(state, event);
 	}
 
 	return SDL_APP_CONTINUE;
@@ -129,6 +131,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 		case SCENE_SHOP:
 			renderShopScene(state);
 			break;
+		case SCENE_WIN:
+			renderWinScene(state);
 	}
 
 	return SDL_APP_CONTINUE;

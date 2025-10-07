@@ -164,6 +164,15 @@ void updateInvNums(appState* state)
 
 void toNextPlayer(appState* state)
 {
+	switch (getWinningPiece(state))
+	{
+		case PIECE_NONE:
+			break;
+		case PIECE_X:
+		case PIECE_O:
+			state->scene = SCENE_WIN;
+			return;
+	}
 
 	player* currentPlayer = (state->game.currentTurn == 'x') ? &state->game.xPlayer : &state->game.oPlayer;
 	// player* otherPlayer = (state->game.currentTurn == 'o') ? &state->game.xPlayer : &state->game.oPlayer;
@@ -332,4 +341,29 @@ void renderSingleItem(appState* state, sprite* texture, int index, SDL_FRect* re
 	}
 
 	rect->x += rect->w + 10;
+}
+
+Piece getWinningPiece(appState* state)
+{
+	int winningSequences[8][3] = {
+		{ 0, 1, 2 },
+		{ 3, 4, 5 },
+		{ 6, 7, 8 },
+		{ 0, 3, 6 },
+		{ 1, 4, 7 },
+		{ 2, 5, 8 },
+		{ 0, 4, 8 },
+		{ 2, 4, 6 }
+	};
+	for (int i = 0; i < 8; i++)
+	{
+		if (state->game.board[winningSequences[i][0]] == state->game.board[winningSequences[i][1]] && state->game.board[winningSequences[i][1]] == state->game.board[winningSequences[i][2]])
+		{
+			if (state->game.board[winningSequences[i][0]] == PIECE_X)
+				return PIECE_X;
+			else if (state->game.board[winningSequences[i][0]] == PIECE_O)
+				return PIECE_O;
+		}
+	}
+	return PIECE_NONE;
 }

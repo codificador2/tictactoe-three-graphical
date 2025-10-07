@@ -41,7 +41,8 @@ typedef enum
 	SCENE_GAME_ACTION,
 	SCENE_ACTION,
 	SCENE_ITEM,
-	SCENE_SHOP
+	SCENE_SHOP,
+	SCENE_WIN
 } Scene;
 
 typedef enum

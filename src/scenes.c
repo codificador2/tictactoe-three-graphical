@@ -268,6 +268,46 @@ void renderShopScene(appState* state)
 	SDL_RenderPresent(state->renderer);
 }
 
+void renderWinScene(appState* state)
+{
+	SDL_Rect board_viewport;
+	board_viewport.x = state->wInfo.windowWidth / 6;
+	board_viewport.w = state->wInfo.windowWidth / 1.5;
+	board_viewport.y = state->wInfo.windowHeight / 6;
+	board_viewport.h = state->wInfo.windowHeight / 1.5;
+	SDL_SetRenderViewport(state->renderer, &board_viewport);
+
+	SDL_FRect rect;
+	if (board_viewport.w > board_viewport.h) {
+		rect.h = board_viewport.h;
+		rect.w = rect.h;
+	} else {
+		rect.w = board_viewport.w;
+		rect.h = rect.w;
+	}
+	rect.x = (board_viewport.w / 2.0) - (rect.w / 2.0) + board_viewport.x;
+	rect.y = (board_viewport.h / 2.0) - (rect.h / 2.0) + board_viewport.y;
+
+	SDL_SetRenderViewport(state->renderer, NULL);
+	renderStaticBoard(state, state->game.board, &rect);
+	SDL_SetRenderViewport(state->renderer, NULL);
+	
+
+	rect.h = state->wInfo.windowWidth / 12.0f;
+	rect.w = rect.h;
+
+	rect.x = 0;
+	rect.y = 0;
+	SDL_RenderTexture(state->renderer, (state->game.currentTurn == 'x') ? x_sprite->texture : o_sprite->texture, NULL, &rect);
+
+	rect.x += rect.w;
+	rect.w = state->wInfo.windowWidth / 6.0f;
+	SDL_RenderTexture(state->renderer, win_text_sprite->texture, NULL, &rect);
+
+
+	SDL_RenderPresent(state->renderer);
+}
+
 SDL_AppResult handleMainMenuEvent(appState* state, SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT && state->selectedZone == ZONE_PLAY_BTN) {
@@ -519,3 +559,5 @@ SDL_AppResult handleShopEvent(appState* state, SDL_Event* event)
 	return SDL_APP_CONTINUE;
 	return SDL_APP_CONTINUE;
 }
+
+SDL_AppResult handleWinEvent(appState* state, SDL_Event* event) { return SDL_APP_CONTINUE; }
