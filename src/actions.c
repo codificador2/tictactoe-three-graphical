@@ -42,9 +42,11 @@ int performAction(appState* state)
 			filler[digit] = otherPlayer->creditCardNumber[digit];
 			getText(state, &state->tInfo.secondaryText, filler, (SDL_Color){255,255,255,255});
 			return 2;
-
 		case ACTION_INVENTORY:
 			getText(state, &state->tInfo.text, "Inventory", (SDL_Color){255,255,255,255});
+			return 2;
+
+		case ACTION_SKIP:
 			return 2;
 
 

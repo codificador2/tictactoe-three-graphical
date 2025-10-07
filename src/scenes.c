@@ -343,6 +343,11 @@ SDL_AppResult handleGameActionEvent(appState* state, SDL_Event* event)
 		else if (state->game.selectedAction != -1)
 		{
 			state->game.action = state->game.selectedAction;
+			if (state->game.action == ACTION_SKIP)
+			{
+				toNextPlayer(state);
+				return SDL_APP_CONTINUE;
+			}
 			int res = performAction(state);
 			if (res != 1)
 			{
