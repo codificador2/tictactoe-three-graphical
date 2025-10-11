@@ -56,6 +56,7 @@ static void initPlayer(player* p)
 	memset(p->inventory, 0, 6 * sizeof(Uint8));
 	randomizeCard(p);
 	p->creditCardNumber[4] = '\0';
+	p->hasCheckedInitialCard = false;
 }
 
 void initGame(gameState* game)

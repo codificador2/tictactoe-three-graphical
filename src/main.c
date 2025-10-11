@@ -10,6 +10,9 @@
 #include "headers/scenes.h"
 #include "headers/game.h"
 
+SDL_Surface* icon = NULL;
+#include <SDL3_image/SDL_image.h>
+
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 {
 	appState* state = calloc(1, sizeof(appState));
@@ -65,6 +68,9 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 
 	updateInvNums(state);
 	initPrices(state);
+
+	icon = IMG_Load("src/assets/icon.png");
+	SDL_SetWindowIcon(state->window, icon);
 
 	return SDL_APP_CONTINUE;
 }
@@ -156,5 +162,6 @@ void SDL_AppQuit(void* appstate, SDL_AppResult res)
 		SDL_DestroyWindow(state->window);
 		SDL_free(state);
 	}
+	SDL_DestroySurface(icon);
 }
 

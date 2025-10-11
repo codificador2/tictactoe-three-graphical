@@ -88,6 +88,7 @@ typedef struct
 	char creditCardNumber[5];
 	bool hasHalfDebuff: 1;
 	Uint8 inventory[6];
+	bool hasCheckedInitialCard: 1;
 } player;
 
 typedef struct
